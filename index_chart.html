@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sensor Data Dashboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      h1 {
+        text-align: center;
+      }
+      .sensor {
+        margin: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        text-align: center;
+      }
+      .sensor h2 {
+        margin: 0;
+      }
+      canvas {
+        width: 300px;
+        height: 150px;
+      }
+    </style>
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Include chartjs-plugin-gauge -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-gauge"></script>
+  </head>
+  <body>
+    <h1>Sensor Data Dashboard</h1>
+
+    <div class="sensor" id="sensor-1">
+      <h2>Sensor 1</h2>
+      <canvas id="sensor1Gauge"></canvas>
+      <p>Voltage: <span id="sensor-1-voltage">N/A</span> V</p>
+      <p>Current: <span id="sensor-1-current">N/A</span> A</p>
+      <p>Power: <span id="sensor-1-power">N/A</span> mW</p>
+      <p>
+        Accumulated Power:
+        <span id="sensor-1-accumulated-power">N/A</span> Joules
+      </p>
+    </div>
+
+    <div class="sensor" id="sensor-2">
+      <h2>Sensor 2</h2>
+      <canvas id="sensor2Gauge"></canvas>
+      <p>Voltage: <span id="sensor-2-voltage">N/A</span> V</p>
+      <p>Current: <span id="sensor-2-current">N/A</span> A</p>
+      <p>Power: <span id="sensor-2-power">N/A</span> mW</p>
+      <p>
+        Accumulated Power:
+        <span id="sensor-2-accumulated-power">N/A</span> Joules
+      </p>
+    </div>
+
+    <script>
+      // Create Gauge Chart for Sensor 1
+      const sensor1Ctx = document
+        .getElementById("sensor1Gauge")
+        .getContext("2d");
+      const sensor1Gauge = new Chart(sensor1Ctx, {
+        type: "doughnut",
+        data: {
+          datasets: [
+            {
+              data: [0, 100], // Initial value
+              backgroundColor: ["red", "lightgray"],
+              borderWidth: 0,
+              needleValue: 0, // Custom property to track needle value
+            },
+          ],
+        },
+        options: {
+          responsive: false,
+          rotation: -90,
+          circumference: 180,
+          plugins: {
+            gauge: {
+              needle: {
+                radiusPercentage: 2,
+                widthPercentage: 3.2,
+                lengthPercentage: 80,
+                color: "black",
+              },
+              valueLabel: {
+                display: true,
+                formatter: Math.round,
+              },
+            },
+          },
+        },
+      });
+
+      // Create Gauge Chart for Sensor 2
+      const sensor2Ctx = document
+        .getElementById("sensor2Gauge")
+        .getContext("2d");
+      const sensor2Gauge = new Chart(sensor2Ctx, {
+        type: "doughnut",
+        data: {
+          datasets: [
+            {
+              data: [0, 100], // Initial value
+              backgroundColor: ["blue", "lightgray"],
+              borderWidth: 0,
+              needleValue: 0, // Custom property to track needle value
+            },
+          ],
+        },
+        options: {
+          responsive: false,
+          rotation: -90,
+          circumference: 180,
+          plugins: {
+            gauge: {
+              needle: {
+                radiusPercentage: 2,
+                widthPercentage: 3.2,
+                lengthPercentage: 80,
+                color: "black",
+              },
+              valueLabel: {
+                display: true,
+                formatter: Math.round,
+              },
+            },
+          },
+        },
+      });
+
+      function updateGauge(sensorGauge, value) {
+        sensorGauge.data.datasets[0].data = [value, 100 - value]; // Update the chart data
+        sensorGauge.options.plugins.gauge.needleValue = value; // Update the needle value
+        sensorGauge.update();
+      }
+
+      function fetchSensorData() {
+        fetch("/data")
+          .then((response) => response.json())
+          .then((data) => {
+            // Update Sensor 1 data
+            document.getElementById("sensor-1-voltage").textContent =
+              data.sensor_1.voltage;
+            document.getElementById("sensor-1-current").textContent =
+              data.sensor_1.current;
+            document.getElementById("sensor-1-power").textContent =
+              data.sensor_1.power;
+            document.getElementById("sensor-1-accumulated-power").textContent =
+              data.sensor_1.accumulated_power.toFixed(2);
+
+            // Update Gauge for Sensor 1
+            updateGauge(sensor1Gauge, data.sensor_1.power);
+
+            // Update Sensor 2 data
+            document.getElementById("sensor-2-voltage").textContent =
+              data.sensor_2.voltage;
+            document.getElementById("sensor-2-current").textContent =
+              data.sensor_2.current;
+            document.getElementById("sensor-2-power").textContent =
+              data.sensor_2.power;
+            document.getElementById("sensor-2-accumulated-power").textContent =
+              data.sensor_2.accumulated_power.toFixed(2);
+
+            // Update Gauge for Sensor 2
+            updateGauge(sensor2Gauge, data.sensor_2.power);
+          })
+          .catch((error) =>
+            console.error("Error fetching sensor data:", error)
+          );
+      }
+
+      // Fetch data every 1 second
+      setInterval(fetchSensorData, 1000);
+    </script>
+  </body>
+</html>
