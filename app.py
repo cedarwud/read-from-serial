@@ -7,8 +7,7 @@ import json  # Import the json module to handle JSON data
 LOGIN_URL = "https://edu.nthu-smart-farming.kits.tw/api/api/account/login"
 DATA_POST_URL = "https://edu.nthu-smart-farming.kits.tw/api/api/iot_data/lab501"
 # DATA_POST_CUSTOM = "http://localhost:3000/api/data"
-DATA_POST_CUSTOM = "http://localhost:3000/api/data"
-# DATA_POST_CUSTOM = "https://gauge-charts.onrender.com/api/data"
+DATA_POST_CUSTOM = "https://gauge-charts.onrender.com/api/data"
 EMAIL = "2024-competition-team9"
 PASSWORD = "38885800"
 
