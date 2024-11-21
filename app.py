@@ -32,7 +32,7 @@ accumulated_power_2 = 0.0
 
 
 # Function to send the data to API
-def send_data(token, sensor_data_1, sensor_data_2, acc_power_1, acc_power_2):
+def send_data(sensor_data_1, sensor_data_2, acc_power_1, acc_power_2):
     # headers = {"Authorization": f"Bearer {token}"}
     data = {
         "data": [
