@@ -3,12 +3,6 @@ import requests
 import time
 import json  # Import the json module to handle JSON data
 
-# Constants for API URLs and credentials
-# LOGIN_URL = "https://edu.nthu-smart-farming.kits.tw/api/api/account/login"
-# DATA_POST_URL = "https://edu.nthu-smart-farming.kits.tw/api/api/iot_data/lab501"
-# DATA_POST_CUSTOM = "https://gauge-charts.onrender.com/api/data"
-# EMAIL = "2024-competition-team9"
-# PASSWORD = "38885800"
 DATA_POST_CUSTOM = "http://localhost:3000/api/data"
 
 # Arduino Serial Port Configuration (change according to your port)
@@ -20,20 +14,8 @@ accumulated_power_1 = 0.0
 accumulated_power_2 = 0.0
 
 
-# Login and get token
-# def get_token():
-#     credentials = {"email": EMAIL, "password": PASSWORD}
-#     response = requests.post(LOGIN_URL, json=credentials)
-#     if response.status_code == 200:
-#         return response.json()["token"]
-#     else:
-#         print("Failed to log in.")
-#         return None
-
-
 # Function to send the data to API
 def send_data(sensor_data_1, sensor_data_2, acc_power_1, acc_power_2):
-    # headers = {"Authorization": f"Bearer {token}"}
     data = {
         "data": [
             {
@@ -81,7 +63,6 @@ def send_data(sensor_data_1, sensor_data_2, acc_power_1, acc_power_2):
         ]
     }
     try:
-        # requests.post(DATA_POST_URL, headers=headers, json=data)
         requests.post(DATA_POST_CUSTOM, json=data)
     except requests.RequestException as e:
         print(f"Failed to send data: {e}")
@@ -104,9 +85,6 @@ def read_from_serial(ser):
 
 def main():
     global accumulated_power_1, accumulated_power_2  # Access global variables
-    # token = get_token()
-    # if not token:
-    #     return
 
     # Open serial port to Arduino
     with serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1) as ser:
@@ -143,7 +121,6 @@ def main():
 
                     # Send the sensor data to the API, including accumulated power
                     send_data(
-                        # token,
                         sensor_data_1,
                         sensor_data_2,
                         accumulated_power_1,
